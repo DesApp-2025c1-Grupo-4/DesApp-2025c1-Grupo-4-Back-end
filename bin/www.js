@@ -7,7 +7,7 @@
 import debugPkg from 'debug';
 import http from 'http';
 import app from '../lib/app';
-import db from '../lib/models';
+import { connectToMongoDb } from '../lib/mongoDb';
 
 const debug = debugPkg('js/www:server');
 
@@ -25,11 +25,10 @@ if (!port) {
   throw '¡¡Hay que setear el port de la aplicación Express!!';
 }
 
-// Run sequelize before listen
-db.sequelize.authenticate().then(() => {
-  app.listen(port, () => {
-    console.log(`¡Aplicación iniciada! ====> 🌎 http://localhost:${port}`);
-  });
+app.listen(port, async () => {
+  console.log(`¡Aplicación iniciada! ====> 🌎 http://localhost:${port}`);
+  await connectToMongoDb();
+  console.log(`Connected to mongoDb`);
 });
 
 server.on('error', onError);
